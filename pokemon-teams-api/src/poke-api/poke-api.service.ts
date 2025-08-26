@@ -18,7 +18,7 @@ export class PokeApiService {
       this.httpService.get<any>(url).pipe(
         catchError(() => {
           throw new NotFoundException(
-            `Pokemon with id or name "${idOrName}" not found in PokéAPI`,
+            `Pokémon com id ou nome "${idOrName}" não foi encontrado na PokéAPI`,
           );
         }),
       ),

@@ -22,28 +22,26 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class TeamsController {
   constructor(private readonly teamsService: TeamsService) {}
 
-  // --- ENDPOINTS CRUD PARA 'TEAM' ---
-
   @Post()
-  @ApiOperation({ summary: 'Create a new team for a trainer' })
+  @ApiOperation({ summary: 'Criar um novo time para um treinador' })
   create(@Body() createTeamDto: CreateTeamDto) {
     return this.teamsService.create(createTeamDto);
   }
 
   @Get('by-trainer/:trainerId')
-  @ApiOperation({ summary: 'List all teams for a specific trainer' })
+  @ApiOperation({ summary: 'Listar todos os times de um treinador específico' })
   findAllByTrainer(@Param('trainerId', ParseUUIDPipe) trainerId: string) {
     return this.teamsService.findAllByTrainer(trainerId);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a single team by its ID' })
+  @ApiOperation({ summary: 'Buscar um time pelo ID' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.teamsService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: "Update a team's name" })
+  @ApiOperation({ summary: 'Atualizar o nome de um time' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTeamDto: UpdateTeamDto,
@@ -52,15 +50,13 @@ export class TeamsController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a team' })
+  @ApiOperation({ summary: 'Deletar um time' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.teamsService.remove(id);
   }
 
-  // --- ENDPOINTS PARA GERENCIAR POKÉMON NO TIME ---
-
   @Post(':teamId/pokemons')
-  @ApiOperation({ summary: 'Add a Pokémon to a team' })
+  @ApiOperation({ summary: 'Adicionar um Pokémon ao time' })
   addPokemon(
     @Param('teamId', ParseUUIDPipe) teamId: string,
     @Body() addPokemonDto: AddPokemonDto,
@@ -69,7 +65,7 @@ export class TeamsController {
   }
 
   @Delete(':teamId/pokemons/:teamPokemonId')
-  @ApiOperation({ summary: 'Remove a Pokémon from a team' })
+  @ApiOperation({ summary: 'Remover um Pokémon do time' })
   removePokemon(
     @Param('teamId', ParseUUIDPipe) teamId: string,
     @Param('teamPokemonId', ParseUUIDPipe) teamPokemonId: string,
@@ -78,7 +74,7 @@ export class TeamsController {
   }
 
   @Get(':teamId/pokemons')
-  @ApiOperation({ summary: 'List all Pokémon in a team with their details' })
+  @ApiOperation({ summary: 'Listar todos os Pokémon de um time com detalhes' })
   listPokemons(@Param('teamId', ParseUUIDPipe) teamId: string) {
     return this.teamsService.listPokemons(teamId);
   }

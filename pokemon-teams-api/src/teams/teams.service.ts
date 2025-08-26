@@ -23,11 +23,7 @@ export class TeamsService {
     private readonly pokeApiService: PokeApiService,
   ) {}
 
-  // --- MÉTODOS CRUD PARA 'TEAM' ---
-
   create(createTeamDto: CreateTeamDto): Promise<Team> {
-    // Para uma aplicação real, seria bom verificar se o trainerId existe.
-    // Para este desafio, seguimos a simplicidade.
     const team = this.teamRepository.create(createTeamDto);
     return this.teamRepository.save(team);
   }
@@ -41,10 +37,10 @@ export class TeamsService {
   async findOne(id: string): Promise<Team> {
     const team = await this.teamRepository.findOne({
       where: { id },
-      relations: ['pokemons'], // Carrega os pokémons associados
+      relations: ['pokemons'],
     });
     if (!team) {
-      throw new NotFoundException(`Team with ID "${id}" not found`);
+      throw new NotFoundException(`Time com ID "${id}" não encontrado`);
     }
     return team;
   }
@@ -55,7 +51,7 @@ export class TeamsService {
       ...updateTeamDto,
     });
     if (!team) {
-      throw new NotFoundException(`Team with ID "${id}" not found`);
+      throw new NotFoundException(`Time com ID "${id}" não encontrado`);
     }
     return this.teamRepository.save(team);
   }
@@ -63,63 +59,56 @@ export class TeamsService {
   async remove(id: string): Promise<void> {
     const result = await this.teamRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Team with ID "${id}" not found`);
+      throw new NotFoundException(`Time com ID "${id}" não encontrado`);
     }
   }
-
-  // --- MÉTODOS PARA GERENCIAR POKÉMON NO TIME ---
 
   async addPokemon(
     teamId: string,
     addPokemonDto: AddPokemonDto,
   ): Promise<TeamPokemon> {
-    const team = await this.findOne(teamId); // Reutiliza o método findOne
+    const team = await this.findOne(teamId);
 
     if (team.pokemons.length >= 6) {
-      throw new BadRequestException('Team is full (max 6 Pokémon)');
+      throw new BadRequestException('Time está cheio (máx. 6 Pokémons)');
     }
 
-    // Valida se o Pokémon existe na PokéAPI
     await this.pokeApiService.findPokemon(addPokemonDto.pokemonIdOrName);
 
     const newTeamPokemon = this.teamPokemonRepository.create({
       teamId,
-      pokemonIdOrName: addPokemonDto.pokemonIdOrName.toLowerCase(), // Padroniza para minúsculas
+      pokemonIdOrName: addPokemonDto.pokemonIdOrName.toLowerCase(),
     });
 
     return this.teamPokemonRepository.save(newTeamPokemon);
   }
 
   async removePokemon(teamId: string, teamPokemonId: string): Promise<void> {
-    // A query de delete já garante que o pokémon pertence ao time correto
     const result = await this.teamPokemonRepository.delete({
       id: teamPokemonId,
       teamId: teamId,
     });
     if (result.affected === 0) {
       throw new NotFoundException(
-        `Pokemon with ID "${teamPokemonId}" not found in team "${teamId}"`,
+        `Pokémon com ID "${teamPokemonId}" não encontrado no time "${teamId}""`,
       );
     }
   }
 
   async listPokemons(teamId: string): Promise<PokemonDetailsDto[]> {
-    const team = await this.findOne(teamId); // Reutiliza o método findOne
+    const team = await this.findOne(teamId);
 
     if (team.pokemons.length === 0) {
       return [];
     }
 
-    // Busca os detalhes de cada Pokémon em paralelo
     const pokemonDetailsPromises = team.pokemons.map((p) =>
       this.pokeApiService.findPokemon(p.pokemonIdOrName),
     );
 
     const resolvedPokemons = await Promise.all(pokemonDetailsPromises);
 
-    // Mapeia para o nosso DTO de resposta, incluindo o ID da nossa entidade local
     return resolvedPokemons.map((data, index) => ({
-      // Adicionamos o ID da nossa tabela 'team_pokemon' para facilitar a remoção no front-end
       teamPokemonId: team.pokemons[index].id,
       id: data.id,
       name: data.name,

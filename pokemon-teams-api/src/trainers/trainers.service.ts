@@ -35,7 +35,7 @@ export class TrainersService {
   async findOne(id: string): Promise<Trainer> {
     const trainer = await this.trainerRepository.findOneBy({ id });
     if (!trainer) {
-      throw new NotFoundException(`Trainer with ID "${id}" not found`);
+      throw new NotFoundException(`Treinador com ID "${id}" não encontrado`);
     }
     return trainer;
   }
@@ -53,7 +53,7 @@ export class TrainersService {
       ...updateTrainerDto,
     });
     if (!trainer) {
-      throw new NotFoundException(`Trainer with ID "${id}" not found`);
+      throw new NotFoundException(`Treinador com ID "${id}" não encontrado`);
     }
     return this.trainerRepository.save(trainer);
   }
@@ -61,7 +61,7 @@ export class TrainersService {
   async remove(id: string): Promise<void> {
     const result = await this.trainerRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Trainer with ID "${id}" not found`);
+      throw new NotFoundException(`Treinador com ID "${id}" não encontrado`);
     }
   }
 }
