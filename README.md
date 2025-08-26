@@ -61,7 +61,7 @@ Siga os passos abaixo para configurar e rodar o projeto localmente:
 
     ```bash
     git clone https://github.com/ErosNetto/Leany-Backend-Challenge.git
-    cd seu-repositorio
+    cd pokemon-teams-api
     ```
 
 2.  **Instale as dependências do projeto:**
