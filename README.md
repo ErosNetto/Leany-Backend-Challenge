@@ -83,10 +83,27 @@ Siga os passos abaixo para configurar e rodar o projeto localmente:
 
 ### 🔑 Variáveis de Ambiente
 
-Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis. Substitua os valores conforme necessário.
+> ⚠️ **Atenção: Sincronização Necessária entre Docker e `.env`**
+>
+> As credenciais do banco de dados são definidas em dois lugares, e elas **precisam ser idênticas**:
+>
+> 1.  **`docker-compose.yml`**: Define as credenciais que o Docker usa para **criar** o container do banco de dados.
+>
+>     ```yaml
+>     environment:
+>       POSTGRES_USER: leany_user
+>       POSTGRES_PASSWORD: leany_password
+>       POSTGRES_DB: poke_teams_db
+>     ```
+>
+> 2.  **`.env`**: Define as credenciais que a sua **API (Nest.JS)** usa para se **conectar** ao banco de dados que o Docker criou.
+>
+> 🔗 Se você alterar as credenciais em um arquivo, lembre-se de atualizar o outro para manter a sincronia!
+
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 
 ```env
-# Configuração do Banco de Dados
+# Configuração do Banco de Dados (deve ser igual ao docker-compose.yml)
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=leany_user
