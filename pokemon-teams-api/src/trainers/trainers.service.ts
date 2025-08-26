@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
@@ -12,9 +16,16 @@ export class TrainersService {
     private readonly trainerRepository: Repository<Trainer>,
   ) {}
 
-  create(createTrainerDto: CreateTrainerDto): Promise<Trainer> {
+  async create(createTrainerDto: CreateTrainerDto): Promise<Trainer> {
     const trainer = this.trainerRepository.create(createTrainerDto);
-    return this.trainerRepository.save(trainer);
+    try {
+      return await this.trainerRepository.save(trainer);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('O nome do treinador já está em uso.');
+      }
+      throw error;
+    }
   }
 
   findAll(): Promise<Trainer[]> {
@@ -27,6 +38,10 @@ export class TrainersService {
       throw new NotFoundException(`Trainer with ID "${id}" not found`);
     }
     return trainer;
+  }
+
+  async findOneByNome(nome: string): Promise<Trainer | null> {
+    return this.trainerRepository.findOneBy({ nome });
   }
 
   async update(

@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TrainersModule } from './trainers/trainers.module';
 import { TeamsModule } from './teams/teams.module';
 import { PokeApiModule } from './poke-api/poke-api.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PokeApiModule } from './poke-api/poke-api.module';
     TrainersModule,
     TeamsModule,
     PokeApiModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

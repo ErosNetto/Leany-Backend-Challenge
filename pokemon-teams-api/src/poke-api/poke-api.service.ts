@@ -4,9 +4,12 @@ import { catchError, firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class PokeApiService {
-  private readonly baseUrl = 'https://pokeapi.co/api/v2/pokemon/';
+  private readonly baseUrl: string;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService) {
+    this.baseUrl =
+      process.env.POKE_API_URL || 'https://pokeapi.co/api/v2/pokemon/';
+  }
 
   async findPokemon(idOrName: string | number): Promise<any> {
     const url = `${this.baseUrl}${String(idOrName).toLowerCase()}`;
